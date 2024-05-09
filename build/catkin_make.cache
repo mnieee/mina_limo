@@ -1,0 +1,2 @@
+mina2:welcome_drink
+-DCATKIN_DEVEL_PREFIX=/home/parkmina/pma_ws/devel -DCMAKE_INSTALL_PREFIX=/home/parkmina/pma_ws/install -G Unix Makefiles

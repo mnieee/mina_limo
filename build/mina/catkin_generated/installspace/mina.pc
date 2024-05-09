@@ -1,0 +1,8 @@
+prefix=/home/parkmina/pma_ws/install
+
+Name: mina
+Description: Description of mina
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
