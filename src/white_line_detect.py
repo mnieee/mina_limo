@@ -6,11 +6,11 @@ import numpy as np
 import cv2 #OpenCV 모듈을 불러오는 것
 
 
-class White_line_Detect:
+class Red_line_Detect:
     def __init__(self):
         self.bridge = CvBridge()
-        rospy.init_node("white_line_node")
-        self.pub = rospy.Publisher("/white/compressed", CompressedImage, queue_size=10)
+        rospy.init_node("red_line_node")
+        self.pub = rospy.Publisher("/red/compressed", CompressedImage, queue_size=10)
         rospy.Subscriber("/camera/rgb/image_raw/compressed", CompressedImage, self.img_CB)
 
     def detect_color(self, img):
@@ -18,16 +18,16 @@ class White_line_Detect:
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # 직접 구현한 BGR2HSVd와 OpenCV의 cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # Define range of white color in HSV
-        white_lower = np.array([0, 0, 200]) #hsv 순서로
-        white_upper = np.array([179, 100, 255]) 
+        red_lower = np.array([5,92,94]) #hsv 순서로
+        red_upper = np.array([6,82,58]) 
 
         # Threshold(한계점) the HSV image to get only white colors
-        white_mask = cv2.inRange(hsv, white_lower, white_upper)
+        red_mask = cv2.inRange(hsv, red_lower, red_upper)
         cv2.imshow("img", img)
-        cv2.imshow("white_mask", white_mask)
-        white_color = cv2.bitwise_and(img, img, mask=white_mask) #연산 이미지1과 연산 이미지2의 값을 비트 단위로 파악하며, 두 이미지의 요소별 논리연산
-        cv2.imshow("white_color", white_color)
-        return white_color
+        cv2.imshow("red_mask", red_mask)
+        red_color = cv2.bitwise_and(img, img, mask=red_mask) #연산 이미지1과 연산 이미지2의 값을 비트 단위로 파악하며, 두 이미지의 요소별 논리연산
+        cv2.imshow("red_color", red_color)
+        return red_color
 
     def img_warp(self, img):
         self.img_x, self.img_y = img.shape[1], img.shape[0]
@@ -65,13 +65,13 @@ class White_line_Detect:
     def img_CB(self, data):
         img = self.bridge.compressed_imgmsg_to_cv2(data)
         warp_img = self.img_warp(img)
-        white_color = self.detect_color(warp_img)
-        white_line_img_msg = self.bridge.cv2_to_compressed_imgmsg(white_color)
-        self.pub.publish(white_line_img_msg)
+        red_color = self.detect_color(warp_img)
+        red_line_img_msg = self.bridge.cv2_to_compressed_imgmsg(red_color)
+        self.pub.publish(red_line_img_msg)
         # cv2.namedWindow("img", cv2.WINDOW_NORMAL)
-        cv2.namedWindow("white_color", cv2.WINDOW_NORMAL)
+        cv2.namedWindow("red_color", cv2.WINDOW_NORMAL)
         # cv2.imshow("img", img)
-        cv2.imshow("white_color", white_color)
+        cv2.imshow("red_color", red_color)
         cv2.waitKey(1)
 
 
